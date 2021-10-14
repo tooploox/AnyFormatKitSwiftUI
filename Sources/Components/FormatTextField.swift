@@ -13,6 +13,8 @@ public class TextFieldWrapper: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(textField)
         configureView()
     }
     
@@ -90,6 +92,7 @@ public struct FormatTextField: UIViewRepresentable {
     
     public func makeUIView(context: Context) -> UIViewType {
         let uiView = TextFieldWrapper()
+        uiView.translatesAutoresizingMaskIntoConstraints = false
         uiView.textField.setContentHuggingPriority(.defaultHigh, for: .vertical)
         uiView.textField.adjustsFontForContentSizeCategory = true
         uiView.textField.delegate = context.coordinator
