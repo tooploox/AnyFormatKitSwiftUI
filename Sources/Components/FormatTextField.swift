@@ -8,12 +8,34 @@
 import SwiftUI
 import AnyFormatKit
 
+public class TextFieldWrapper: UIView {
+    let textField = UITextField()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureView() {
+        NSLayoutConstraint.activate([
+            textField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            textField.leadingAnchor.constraint(greaterThanOrEqualTo: safeAreaLayoutGuide.leadingAnchor),
+            textField.trailingAnchor.constraint(greaterThanOrEqualTo: safeAreaLayoutGuide.trailingAnchor),
+            textField.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+}
+
 @available(iOS 13.0, *)
 public struct FormatTextField: UIViewRepresentable {
     
     // MARK: - Typealiases
     
-    public typealias UIViewType = UITextField
+    public typealias UIViewType = TextFieldWrapper
     
     // MARK: - Data
     
@@ -67,45 +89,44 @@ public struct FormatTextField: UIViewRepresentable {
     // MARK: - UIViewRepresentable
     
     public func makeUIView(context: Context) -> UIViewType {
-        let uiView = UITextField()
-        uiView.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        uiView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        uiView.adjustsFontForContentSizeCategory = true
-        uiView.delegate = context.coordinator
+        let uiView = TextFieldWrapper()
+        uiView.textField.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        uiView.textField.adjustsFontForContentSizeCategory = true
+        uiView.textField.delegate = context.coordinator
         context.coordinator.formatter = formatter
         return uiView
     }
     
     public func updateUIView(_ uiView: UIViewType, context: Context) {
         let formattedText = formatter.format(unformattedText)
-        if uiView.text != formattedText {
-            uiView.text = formattedText
+        if uiView.textField.text != formattedText {
+            uiView.textField.text = formattedText
         }
-        uiView.textColor = textColor
-        uiView.font = font
+        uiView.textField.textColor = textColor
+        uiView.textField.font = font
         updateUIViewPlaceholder(uiView)
-        uiView.clearButtonMode = clearButtonMode
-        uiView.borderStyle = borderStyle
-        uiView.tintColor = accentColor
-        uiView.keyboardType = keyboardType
+        uiView.textField.clearButtonMode = clearButtonMode
+        uiView.textField.borderStyle = borderStyle
+        uiView.textField.tintColor = accentColor
+        uiView.textField.keyboardType = keyboardType
         updateUIViewTextAlignment(uiView)
     }
     
     private func updateUIViewPlaceholder(_ uiView: UIViewType) {
         if let placeholder = placeholder {
             if let placeholderColor = placeholderColor {
-                uiView.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [.foregroundColor: placeholderColor])
+                uiView.textField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [.foregroundColor: placeholderColor])
             } else {
-                uiView.placeholder = placeholder
+                uiView.textField.placeholder = placeholder
             }
         } else {
-            uiView.placeholder = nil
+            uiView.textField.placeholder = nil
         }
     }
     
     private func updateUIViewTextAlignment(_ uiView: UIViewType) {
         guard let textAlignment = textAlignment else { return }
-        uiView.textAlignment = textAlignment
+        uiView.textField.textAlignment = textAlignment
     }
     
     public func makeCoordinator() -> Coordinator {
