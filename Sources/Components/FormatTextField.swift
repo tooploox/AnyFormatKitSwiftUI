@@ -69,6 +69,7 @@ public struct FormatTextField: UIViewRepresentable {
     public func makeUIView(context: Context) -> UIViewType {
         let uiView = UITextField()
         uiView.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        uiView.adjustsFontForContentSizeCategory = true
         uiView.delegate = context.coordinator
         context.coordinator.formatter = formatter
         return uiView
